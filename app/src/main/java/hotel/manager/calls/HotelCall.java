@@ -1,0 +1,47 @@
+package hotel.manager.calls;
+
+import java.util.List;
+
+import hotel.manager.entities.HotelResponse;
+import hotel.manager.retrofitInterfaces.HotelRetroInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class HotelCall {
+    private static String URL = "http://localhost:8090/hotel";
+
+    public List<HotelResponse> hotels;
+    public String res;
+    HotelRetroInterface api;
+    String token;
+
+    public HotelCall(){
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        this.api = retrofit.create(HotelRetroInterface.class);
+    }
+
+    public void findAll(){
+        Call<List<HotelResponse>> call = api.getAllHotelCall(token);
+        call.enqueue(new Callback<List<HotelResponse>>() {
+            @Override
+            public void onResponse(Call<List<HotelResponse>> call, Response<List<HotelResponse>> response) {
+                try{
+                    if(response.isSuccessful()){
+                        hotels = response.body();
+                    }
+                }catch (Exception e){
+                        e.getMessage();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<HotelResponse>> call, Throwable t) {
+
+            }
+        });
+    }
+}
