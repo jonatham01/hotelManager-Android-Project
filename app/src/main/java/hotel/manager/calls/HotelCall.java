@@ -3,6 +3,7 @@ package hotel.manager.calls;
 import androidx.annotation.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import hotel.manager.entities.HotelRequest;
@@ -33,18 +34,18 @@ public class HotelCall {
         Call<List<HotelResponse>> call = api.getAllHotelCall(token);
         call.enqueue(new Callback<List<HotelResponse>>() {
             @Override
-            public void onResponse(Call<List<HotelResponse>> call, Response<List<HotelResponse>> response) {
+            public void onResponse(@NonNull Call<List<HotelResponse>> call, @NonNull Response<List<HotelResponse>> response) {
                 try{
                     if(response.isSuccessful()){
                         hotels = response.body();
                     }
-                }catch (Exception e){
-                        e.getMessage();
+                }catch(Exception e){
+                    error ="System couldn't  show all hotels, wait";
                 }
             }
 
             @Override
-            public void onFailure(Call<List<HotelResponse>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<HotelResponse>> call, @NonNull Throwable t) {
 
             }
         });
@@ -54,7 +55,7 @@ public class HotelCall {
         Call<HotelResponse>call = api.createOneHotel(token, request);
         call.enqueue(new Callback<HotelResponse>() {
             @Override
-            public void onResponse(Call<HotelResponse> call, Response<HotelResponse> response) {
+            public void onResponse(@NonNull Call<HotelResponse> call, @NonNull Response<HotelResponse> response) {
                 try{
                     if(response.isSuccessful()){
                         hotels.add(response.body());
@@ -65,7 +66,7 @@ public class HotelCall {
             }
 
             @Override
-            public void onFailure(Call<HotelResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<HotelResponse> call, @NonNull Throwable t) {
 
             }
         });
@@ -75,22 +76,22 @@ public class HotelCall {
         Call<HotelResponse> call = api.updateOneHotel( token,id, request );
         call.enqueue(new Callback<HotelResponse>() {
             @Override
-            public void onResponse(Call<HotelResponse> call, @NonNull Response<HotelResponse> response) {
+            public void onResponse(@NonNull Call<HotelResponse> call, @NonNull Response<HotelResponse> response) {
                 try{
                     if(response.isSuccessful()){
                         hotels = hotels.stream()
                                 .map(data ->{
-                                    if(data.getId() ==id) return response.body();
+                                    if(Objects.equals(data.getId(), id)) return response.body();
                                     return data;
                                 }).collect(Collectors.toList());
                     }
                 }catch (Exception e){
-                    error ="System couldn't create new hotel,try again";
+                    error ="System couldn't update hotel,try again";
                 }
             }
 
             @Override
-            public void onFailure(Call<HotelResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<HotelResponse> call, @NonNull Throwable t) {
 
             }
         });
