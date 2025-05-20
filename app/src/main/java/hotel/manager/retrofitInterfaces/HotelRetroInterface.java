@@ -3,6 +3,7 @@ package hotel.manager.retrofitInterfaces;
 import java.util.List;
 
 import hotel.manager.entities.HotelPhoneRequest;
+import hotel.manager.entities.HotelRequest;
 import hotel.manager.entities.HotelResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -34,13 +35,13 @@ public interface HotelRetroInterface {
     @POST("new")
     Call<HotelResponse> createOneHotel(
             @Header("Authorization") String authToken,
-            @Body HotelPhoneRequest request);
+            @Body HotelRequest request);
 
     @Headers({"Content-Type: application/json"})
     @PUT("update/{id}")
-    Call<HotelResponse> createOneHotel(
+    Call<HotelResponse> updateOneHotel(
             @Header("Authorization") String authToken,
-            @Path("id") Integer id, @Body HotelPhoneRequest request);
+            @Path("id") Integer id, @Body HotelRequest request);
 
     @Headers({"Content-Type: application/json"})
     @DELETE("{id}")
