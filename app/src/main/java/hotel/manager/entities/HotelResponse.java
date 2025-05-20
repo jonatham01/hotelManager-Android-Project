@@ -1,5 +1,7 @@
 package hotel.manager.entities;
 
+import java.util.List;
+
 public class HotelResponse {
     private Integer id;
     private String name;
