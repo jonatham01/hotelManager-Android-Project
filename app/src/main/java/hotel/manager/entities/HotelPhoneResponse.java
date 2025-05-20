@@ -5,4 +5,27 @@ public class HotelPhoneResponse {
     private String hotelNumber;
     private String hotelName;
 
+    public short getId() {
+        return id;
+    }
+
+    public void setId(short id) {
+        this.id = id;
+    }
+
+    public String getHotelNumber() {
+        return hotelNumber;
+    }
+
+    public void setHotelNumber(String hotelNumber) {
+        this.hotelNumber = hotelNumber;
+    }
+
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
 }
