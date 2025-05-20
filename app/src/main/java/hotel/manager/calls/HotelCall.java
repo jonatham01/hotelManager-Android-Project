@@ -1,6 +1,9 @@
 package hotel.manager.calls;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import hotel.manager.entities.HotelRequest;
 import hotel.manager.entities.HotelResponse;
@@ -55,6 +58,31 @@ public class HotelCall {
                 try{
                     if(response.isSuccessful()){
                         hotels.add(response.body());
+                    }
+                }catch (Exception e){
+                    error ="System couldn't create new hotel,try again";
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HotelResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void update(HotelRequest request, Integer id){
+        Call<HotelResponse> call = api.updateOneHotel( token,id, request );
+        call.enqueue(new Callback<HotelResponse>() {
+            @Override
+            public void onResponse(Call<HotelResponse> call, @NonNull Response<HotelResponse> response) {
+                try{
+                    if(response.isSuccessful()){
+                        hotels = hotels.stream()
+                                .map(data ->{
+                                    if(data.getId() ==id) return response.body();
+                                    return data;
+                                }).collect(Collectors.toList());
                     }
                 }catch (Exception e){
                     error ="System couldn't create new hotel,try again";
