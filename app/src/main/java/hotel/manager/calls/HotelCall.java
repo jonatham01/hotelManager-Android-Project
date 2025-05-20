@@ -2,6 +2,7 @@ package hotel.manager.calls;
 
 import java.util.List;
 
+import hotel.manager.entities.HotelRequest;
 import hotel.manager.entities.HotelResponse;
 import hotel.manager.retrofitInterfaces.HotelRetroInterface;
 import retrofit2.Call;
@@ -17,6 +18,7 @@ public class HotelCall {
     public String res;
     HotelRetroInterface api;
     String token;
+    String error;
 
     public HotelCall(){
         Retrofit retrofit = new Retrofit.Builder().baseUrl(URL)
@@ -40,6 +42,27 @@ public class HotelCall {
 
             @Override
             public void onFailure(Call<List<HotelResponse>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void createOne(HotelRequest request){
+        Call<HotelResponse>call = api.createOneHotel(token, request);
+        call.enqueue(new Callback<HotelResponse>() {
+            @Override
+            public void onResponse(Call<HotelResponse> call, Response<HotelResponse> response) {
+                try{
+                    if(response.isSuccessful()){
+                        hotels.add(response.body());
+                    }
+                }catch (Exception e){
+                    error ="System couldn't create new hotel,try again";
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HotelResponse> call, Throwable t) {
 
             }
         });
