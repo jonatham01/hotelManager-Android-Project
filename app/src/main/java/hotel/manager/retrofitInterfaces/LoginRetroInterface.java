@@ -12,11 +12,9 @@ import retrofit2.http.POST;
 
 public  interface LoginRetroInterface {
 
-    @Headers({"Content-Type: application/json"})
+
     @POST("authenticate")
-    Call<UserLoginResponse> login(
-            @Header("Authorization") String token,
-            @Body UserLogin request);
+    Call<UserLoginResponse> login(@Body UserLogin request);
 
     @Headers({"Content-Type: application/json"})
     @GET("profile")
