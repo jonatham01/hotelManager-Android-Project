@@ -20,9 +20,9 @@ public class HotelCall {
 
     public List<HotelResponse> hotels;
     public String res;
-    HotelRetroInterface api;
-    String token;
-    String error;
+    private HotelRetroInterface api;
+    public String token;
+    public String error;
 
     public HotelCall(){
         Retrofit retrofit = new Retrofit.Builder().baseUrl(URL)
