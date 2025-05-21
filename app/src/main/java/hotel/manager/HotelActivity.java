@@ -1,5 +1,6 @@
 package hotel.manager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +41,19 @@ public class HotelActivity extends AppCompatActivity {
             return insets;
         });
 
+        //intent building
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
         //user data building
         UserCall userCall = new UserCall();
-        userCall.token = "dodkjoa";
+        if(bundle !=null) userCall.token = (String) bundle.get("tokenResult");
         userCall.getProfile();
         userImageView =findViewById(R.id.userImage);
         userRoleView = findViewById(R.id.userRole);
         userNameView = findViewById(R.id.userName);
-
+        userRoleView.setText(userCall.user.getRole());
+        userNameView.setText(userCall.user.getName());
 
         //hotel data building
         nameEdit = findViewById(R.id.editNombre);

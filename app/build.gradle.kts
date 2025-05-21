@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.picasso)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
