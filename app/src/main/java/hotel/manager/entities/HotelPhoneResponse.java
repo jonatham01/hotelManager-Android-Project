@@ -1,15 +1,15 @@
 package hotel.manager.entities;
 
 public class HotelPhoneResponse {
-    private short id;
+    private Short id;
     private String hotelNumber;
     private String hotelName;
 
-    public short getId() {
+    public Short getId() {
         return id;
     }
 
-    public void setId(short id) {
+    public void setId(Short id) {
         this.id = id;
     }
 

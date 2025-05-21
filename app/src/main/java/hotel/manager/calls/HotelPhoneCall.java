@@ -1,8 +1,11 @@
 package hotel.manager.calls;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+import hotel.manager.entities.HotelPhone;
 import hotel.manager.entities.HotelPhoneRequest;
 import hotel.manager.entities.HotelPhoneResponse;
 import hotel.manager.retrofitInterfaces.PhoneRetroInterface;
@@ -17,7 +20,7 @@ public class HotelPhoneCall {
     public List<HotelPhoneResponse> phoneList;
     public String res;
     PhoneRetroInterface api;
-    String token;
+    public String token;
     String error;
 
     public HotelPhoneCall(){
@@ -28,24 +31,26 @@ public class HotelPhoneCall {
         api = retrofit.create(PhoneRetroInterface.class);
     }
 
-    public void findAll(){
+    public void findAll(Runnable onComplete){
         Call<List<HotelPhoneResponse>> call = api.getAllHotelPhones(token);
         call.enqueue(new Callback<List<HotelPhoneResponse>>() {
             @Override
-            public void onResponse(Call<List<HotelPhoneResponse>> call, Response<List<HotelPhoneResponse>> response) {
-                try{
-                    if(response.isSuccessful()) phoneList = response.body();
-                }catch (Exception e){
-                    error = "System could find any phone";
+            public void onResponse(@NonNull Call<List<HotelPhoneResponse>> call, @NonNull Response<List<HotelPhoneResponse>> response) {
+                try {
+                    if(response.isSuccessful()) {
+                        phoneList = response.body();
+                        onComplete.run();
+                    }
+                } catch (Exception e) {
+                    error = "System could not find any phone";
                 }
             }
 
             @Override
-            public void onFailure(Call<List<HotelPhoneResponse>> call, Throwable t) {
-
-            }
+            public void onFailure(@NonNull Call<List<HotelPhoneResponse>> call, @NonNull Throwable t) {}
         });
     }
+
 
     public void create(HotelPhoneRequest request){
         Call<HotelPhoneResponse> call = api.createNewHotelPhoneResponse(this.token, request);
@@ -66,7 +71,7 @@ public class HotelPhoneCall {
         });
     }
 
-    public void update(HotelPhoneRequest request, Short id){
+    public void update(HotelPhone request, Short id,Runnable onComplete){
         Call<HotelPhoneResponse> call = api.updateHotelPhoneResponse(token,request,id);
         call.enqueue(new Callback<HotelPhoneResponse>() {
             @Override
@@ -79,7 +84,8 @@ public class HotelPhoneCall {
                                 phone = response.body();
                             }
                              return phone;
-                        }).collect(Collectors.toList()); ;
+                        }).collect(Collectors.toList());
+                        onComplete.run();
                     }
                 }catch (Exception e){
                     error = "Error: System could not update hotel phone";
@@ -87,19 +93,22 @@ public class HotelPhoneCall {
             }
 
             @Override
-            public void onFailure(Call<HotelPhoneResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<HotelPhoneResponse> call, @NonNull Throwable t) {
 
             }
         });
     }
 
-    public void delete(Short id){
+    public void delete(Short id,Runnable onComplete){
         Call<Boolean> call = api.deleteHotelPhoneResponse(token,id);
         call.enqueue(new Callback<Boolean>() {
             @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+            public void onResponse(@NonNull Call<Boolean> call, @NonNull Response<Boolean> response) {
                 try{
-                    if(response.isSuccessful()) phoneList.stream().filter(data->data.getId() ==id ).collect(Collectors.toList());
+                    if(response.isSuccessful())  phoneList = phoneList.stream()
+                            .filter(data -> !data.getId().equals(id))
+                            .collect(Collectors.toList());
+                    onComplete.run();
                 }catch (Exception e){
                     error = "Error: System couldn't delete phone.";
                 }

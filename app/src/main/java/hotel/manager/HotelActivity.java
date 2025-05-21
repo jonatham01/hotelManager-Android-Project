@@ -16,6 +16,7 @@ import java.util.List;
 
 import hotel.manager.adapters.phonesAdapter;
 import hotel.manager.calls.HotelCall;
+import hotel.manager.calls.HotelPhoneCall;
 import hotel.manager.calls.UserCall;
 import hotel.manager.entities.HotelPhoneResponse;
 
@@ -37,13 +38,9 @@ public class HotelActivity extends AppCompatActivity {
             return insets;
         });
 
-        phoneListView = findViewById(R.id.phoneListView);
-        List<HotelPhoneResponse> phones = new ArrayList<>();
-        phonesAdapter adapter = new phonesAdapter(this,phones);
-        phoneListView.setAdapter(adapter);
-
         //user data building
         UserCall userCall = new UserCall();
+        userCall.token = "dodkjoa";
         userCall.getProfile();
         userImageView =findViewById(R.id.userImage);
         userRoleView = findViewById(R.id.userRole);
@@ -55,12 +52,25 @@ public class HotelActivity extends AppCompatActivity {
         countryEdit = findViewById(R.id.paisEdit);
 
         HotelCall hotelCall = new HotelCall();
+        hotelCall.token = userCall.token;
         hotelCall.findAll();
         nameEdit.setText(hotelCall.hotels.get(0).getName());
         countryEdit.setText(hotelCall.hotels.get(0).getCountry());
         stateEdit.setText(hotelCall.hotels.get(0).getState());
         cityEdit.setText(hotelCall.hotels.get(0).getCity());
         addressEdit.setText(hotelCall.hotels.get(0).getAddress());
+
+        // hotel phone data building
+        phoneListView = findViewById(R.id.phoneListView);
+        HotelPhoneCall hotelPhoneCall = new HotelPhoneCall();
+        hotelPhoneCall.token = userCall.token;
+        hotelPhoneCall.findAll(() -> {
+            phonesAdapter adapter = new phonesAdapter(this, hotelPhoneCall.phoneList, hotelPhoneCall);
+            phoneListView.setAdapter(adapter);
+        });
+
+        phonesAdapter adapter = new phonesAdapter(this, hotelPhoneCall.phoneList, hotelPhoneCall);
+        phoneListView.setAdapter(adapter);
 
     }
 }

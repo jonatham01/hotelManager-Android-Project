@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HotelManager</string>
+    <string name="hoteles">Hoteles</string>
+    <string name="icon">Icono</string>
 </resources>

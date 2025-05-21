@@ -2,6 +2,7 @@ package hotel.manager.retrofitInterfaces;
 
 import java.util.List;
 
+import hotel.manager.entities.HotelPhone;
 import hotel.manager.entities.HotelPhoneRequest;
 import hotel.manager.entities.HotelPhoneResponse;
 import retrofit2.Call;
@@ -25,7 +26,7 @@ public interface PhoneRetroInterface {
 
     @Headers({"Content-type: application.json"})
     @PUT("{id}")
-    Call<HotelPhoneResponse> updateHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhoneRequest request, @Path("id") Short id);
+    Call<HotelPhoneResponse> updateHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhone request, @Path("id") Short id);
 
     @Headers({"Content-type: application.json"})
     @DELETE("{id}")
