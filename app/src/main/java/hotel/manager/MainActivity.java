@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import hotel.manager.callbacks.LoginCallback;
 import hotel.manager.calls.UserCall;
 import hotel.manager.entities.UserLogin;
 
@@ -34,10 +35,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         user = findViewById(R.id.user_edit);
         password = findViewById(R.id.password_edit);
+        button = findViewById(R.id.button);
+        button.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
+        //Toast.makeText(MainActivity.this, "intento", Toast.LENGTH_SHORT).show();
         int id = view.getId();
         if(id == R.id.button){
             UserLogin userLogin = new UserLogin(
@@ -45,19 +49,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     password.getText().toString()
             );
             UserCall call = new UserCall();
-            call.loginUser(userLogin);
-            if(call.error!=null){
-                String token = call.token;
-                Intent intent = new Intent(this,HotelActivity.class);
-                intent.putExtra("tokenResult",token);
-            }else  {
-                String result = "Login error " ;
-                Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
-                call.error =  null;
-            }
+            call.loginUser(userLogin, new LoginCallback() {
+                @Override
+                public void onSuccess(String token) {
+                    runOnUiThread(()->{
+                        Intent intent = new Intent(MainActivity.this,HotelActivity.class);
+                        intent.putExtra("tokenResult",token);
+                        startActivity(intent);
+                    });
+                }
 
+                @Override
+                public void onError(String message) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
 
-
-        }
+        }//id button condition is ended
     }
 }

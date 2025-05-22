@@ -16,20 +16,21 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface PhoneRetroInterface {
-    @Headers({"Content-type: application.json"})
-    @GET()
-    Call<List<HotelPhoneResponse>> getAllHotelPhones(@Header("Authentication") String token);
 
-    @Headers({"Content-type: application.json"})
-    @POST()
+    @Headers("Content-Type: application/json")
+    @GET("hotelphones")
+    Call<List<HotelPhoneResponse>> getAllHotelPhones(@Header("Authorization") String token);
+
+    @Headers("Content-Type: application/json")
+    @POST("hotelphones")
     Call<HotelPhoneResponse> createNewHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhoneRequest request);
 
-    @Headers({"Content-type: application.json"})
-    @PUT("{id}")
+    @Headers("Content-Type: application/json")
+    @PUT("hotelphones/{id}")
     Call<HotelPhoneResponse> updateHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhone request, @Path("id") Short id);
 
-    @Headers({"Content-type: application.json"})
-    @DELETE("{id}")
+    @Headers("Content-Type: application/json")
+    @DELETE("hotelphones/{id}")
     Call<Boolean> deleteHotelPhoneResponse(@Header("Authorization") String token,  @Path("id") Short id);
 
 

@@ -1,7 +1,10 @@
 package hotel.manager.calls;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import hotel.manager.callbacks.LoginCallback;
 import hotel.manager.entities.User;
 import hotel.manager.entities.UserLogin;
 import hotel.manager.entities.UserLoginResponse;
@@ -17,7 +20,7 @@ public class UserCall {
     public User user;
     public String error;
     public String token;
-    private String URL;
+    private String URL = "http://10.0.2.2:8090/auth/";
     private LoginRetroInterface api;
 
     public UserCall(){
@@ -28,37 +31,39 @@ public class UserCall {
         this.api = retrofit.create(LoginRetroInterface.class);
     }
 
-    public void loginUser(UserLogin request){
+    public void loginUser(UserLogin request, LoginCallback callback){
         Call<UserLoginResponse> call = api.login(request);
         call.enqueue(new Callback<UserLoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<UserLoginResponse> call, @NonNull Response<UserLoginResponse> response) {
-                try {
-                    if(response.isSuccessful()){
-                        assert response.body() != null;
-                        token = response.body().getToken();
-                    }
-                }catch (Exception e){
-                    error = "Try again";
-                    onResponse(call,response);
+                if(response.isSuccessful() && response.body() != null){
+                    token = response.body().getToken();
+                    callback.onSuccess(token);
+                } else {
+                    callback.onError("Login failed: invalid credentials");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<UserLoginResponse> call, @NonNull Throwable t) {
-
+                Log.e("RETROFIT_ERROR", "Login failed: " + t.getMessage(), t);
+                callback.onError("Login failed: " + t.getMessage());
             }
         });
     }
 
-    public void getProfile(){
-        Call<User> call = api.getUserProfile(this.token);
+    public void getProfile(Runnable onComplete){
+        Call<User> call = api.getUserProfile("Bearer " + token , token) ;
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 try{
                     if(response.isSuccessful()){
                         user = response.body();
+                        onComplete.run();
+                    }
+                    else {
+                        error = "Could not retrieve user: " + response.message();
                     }
                 } catch (Exception e) {
                     error= "Wait, system is finding user profile";
@@ -67,7 +72,7 @@ public class UserCall {
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-
+                error = "Connection error while retrieving user.";
             }
         });
     }

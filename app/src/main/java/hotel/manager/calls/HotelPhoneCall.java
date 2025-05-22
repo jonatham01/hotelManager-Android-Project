@@ -1,8 +1,11 @@
 package hotel.manager.calls;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import hotel.manager.entities.HotelPhone;
@@ -16,7 +19,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HotelPhoneCall {
-    private String URL ="http://localhost:8090/hotelphones";
+    private String URL ="http://10.0.2.2:8090/";
     public List<HotelPhoneResponse> phoneList;
     public String res;
     PhoneRetroInterface api;
@@ -32,7 +35,7 @@ public class HotelPhoneCall {
     }
 
     public void findAll(Runnable onComplete){
-        Call<List<HotelPhoneResponse>> call = api.getAllHotelPhones(token);
+        Call<List<HotelPhoneResponse>> call = api.getAllHotelPhones("Bearer " + token);
         call.enqueue(new Callback<List<HotelPhoneResponse>>() {
             @Override
             public void onResponse(@NonNull Call<List<HotelPhoneResponse>> call, @NonNull Response<List<HotelPhoneResponse>> response) {
@@ -43,17 +46,22 @@ public class HotelPhoneCall {
                     }
                 } catch (Exception e) {
                     error = "System could not find any phone";
+                    Log.e("error:" , Objects.requireNonNull(e.getMessage()));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<HotelPhoneResponse>> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<List<HotelPhoneResponse>> call, @NonNull Throwable t) {
+                Log.e("error:" , "Onfailure", t);
+            }
+
+
         });
     }
 
 
     public void create(HotelPhoneRequest request){
-        Call<HotelPhoneResponse> call = api.createNewHotelPhoneResponse(this.token, request);
+        Call<HotelPhoneResponse> call = api.createNewHotelPhoneResponse("Bearer " + token, request);
         call.enqueue(new Callback<HotelPhoneResponse>() {
             @Override
             public void onResponse(Call<HotelPhoneResponse> call, Response<HotelPhoneResponse> response) {
@@ -72,7 +80,7 @@ public class HotelPhoneCall {
     }
 
     public void update(HotelPhone request, Short id,Runnable onComplete){
-        Call<HotelPhoneResponse> call = api.updateHotelPhoneResponse(token,request,id);
+        Call<HotelPhoneResponse> call = api.updateHotelPhoneResponse("Bearer " + token,request,id);
         call.enqueue(new Callback<HotelPhoneResponse>() {
             @Override
             public void onResponse(Call<HotelPhoneResponse> call, Response<HotelPhoneResponse> response) {
@@ -100,7 +108,7 @@ public class HotelPhoneCall {
     }
 
     public void delete(Short id,Runnable onComplete){
-        Call<Boolean> call = api.deleteHotelPhoneResponse(token,id);
+        Call<Boolean> call = api.deleteHotelPhoneResponse("Bearer " + token,id);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(@NonNull Call<Boolean> call, @NonNull Response<Boolean> response) {

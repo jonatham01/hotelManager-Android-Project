@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +42,10 @@ public class HotelActivity extends AppCompatActivity {
             return insets;
         });
 
+
+        userImageView =findViewById(R.id.userImage);
+        userRoleView = findViewById(R.id.userRole);
+        userNameView = findViewById(R.id.userName);
         //intent building
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -48,37 +53,51 @@ public class HotelActivity extends AppCompatActivity {
         //user data building
         UserCall userCall = new UserCall();
         if(bundle !=null) userCall.token = (String) bundle.get("tokenResult");
-        userCall.getProfile();
-        userImageView =findViewById(R.id.userImage);
-        userRoleView = findViewById(R.id.userRole);
-        userNameView = findViewById(R.id.userName);
-        userRoleView.setText(userCall.user.getRole());
-        userNameView.setText(userCall.user.getName());
+
+        userCall.getProfile(() -> {
+            // Este bloque se ejecuta solo después de que la API devuelve la info del usuario
+            runOnUiThread(() -> {
+
+                userNameView.setText(userCall.user.getName());
+                userRoleView.setText(userCall.user.getRole());
+                // continuar con llamadas dependientes (hoteles, teléfonos, etc.)
+            });
+        });
 
         //hotel data building
         nameEdit = findViewById(R.id.editNombre);
         countryEdit = findViewById(R.id.paisEdit);
+        stateEdit =findViewById(R.id.stateEdit);
+        cityEdit =findViewById(R.id.cityEdit);
+        addressEdit =findViewById(R.id.addressEdit);
 
-        HotelCall hotelCall = new HotelCall();
-        hotelCall.token = userCall.token;
-        hotelCall.findAll();
-        nameEdit.setText(hotelCall.hotels.get(0).getName());
-        countryEdit.setText(hotelCall.hotels.get(0).getCountry());
-        stateEdit.setText(hotelCall.hotels.get(0).getState());
-        cityEdit.setText(hotelCall.hotels.get(0).getCity());
-        addressEdit.setText(hotelCall.hotels.get(0).getAddress());
+        HotelCall hotelCall = new HotelCall(this);
+        assert bundle != null;
+        hotelCall.token = (String) bundle.get("tokenResult");
+        hotelCall.findAll(() -> runOnUiThread(() -> {
+
+            try{
+                nameEdit.setText(hotelCall.hotels.get(0).getName());
+                countryEdit.setText(hotelCall.hotels.get(0).getCountry());
+                stateEdit.setText(hotelCall.hotels.get(0).getState());
+                cityEdit.setText(hotelCall.hotels.get(0).getCity());
+                addressEdit.setText(hotelCall.hotels.get(0).getAddress());
+            }catch (Exception e){
+                nameEdit.setText("No hotel found");
+            }
+
+        }));
 
         // hotel phone data building
         phoneListView = findViewById(R.id.phoneListView);
         HotelPhoneCall hotelPhoneCall = new HotelPhoneCall();
-        hotelPhoneCall.token = userCall.token;
+        hotelPhoneCall.token = (String) bundle.get("tokenResult");
         hotelPhoneCall.findAll(() -> {
-            phonesAdapter adapter = new phonesAdapter(this, hotelPhoneCall.phoneList, hotelPhoneCall);
+            phonesAdapter adapter = new phonesAdapter(HotelActivity.this, hotelPhoneCall.phoneList, hotelPhoneCall);
             phoneListView.setAdapter(adapter);
         });
 
-        phonesAdapter adapter = new phonesAdapter(this, hotelPhoneCall.phoneList, hotelPhoneCall);
-        phoneListView.setAdapter(adapter);
+
 
     }
 }
