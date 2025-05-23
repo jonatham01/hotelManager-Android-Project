@@ -33,7 +33,7 @@ public class phonesAdapter  extends ArrayAdapter<HotelPhoneResponse> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView,  ViewGroup parent){
+    public View getView(int position, View convertView, @NonNull ViewGroup parent){
 
         HotelPhoneResponse phone = getItem(position);
 
@@ -61,7 +61,7 @@ public class phonesAdapter  extends ArrayAdapter<HotelPhoneResponse> {
                 HotelPhone request = new HotelPhone();
                 request.setNumber(newPhone);
                 request.setId(phone.getId());
-                phoneCall.update(request, phone.getId(), () -> {
+                phoneCall.update(request, phone.getHotelNumber(), () -> {
                     phone.setHotelNumber(newPhone);
                     notifyDataSetChanged();
                 });
@@ -77,7 +77,7 @@ public class phonesAdapter  extends ArrayAdapter<HotelPhoneResponse> {
                     .setTitle("Confirmar eliminación")
                     .setMessage("¿Deseas borrar este número?")
                     .setPositiveButton("Sí", (dialog, which) -> {
-                        phoneCall.delete(phone.getId(), () -> {
+                        phoneCall.delete(phone.getHotelNumber(), () -> {
                             remove(phone);
                             notifyDataSetChanged();
                         });

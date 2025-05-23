@@ -26,12 +26,12 @@ public interface PhoneRetroInterface {
     Call<HotelPhoneResponse> createNewHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhoneRequest request);
 
     @Headers("Content-Type: application/json")
-    @PUT("hotelphones/{id}")
-    Call<HotelPhoneResponse> updateHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhone request, @Path("id") Short id);
+    @PUT("hotelphones/{oldNumber}")
+    Call<HotelPhoneResponse> updateHotelPhoneResponse(@Header("Authorization") String token, @Body HotelPhone request, @Path("oldNumber") String oldNumber);
 
     @Headers("Content-Type: application/json")
-    @DELETE("hotelphones/{id}")
-    Call<Boolean> deleteHotelPhoneResponse(@Header("Authorization") String token,  @Path("id") Short id);
+    @DELETE("hotelphones/{number}")
+    Call<Boolean> deleteHotelPhoneResponse(@Header("Authorization") String token,  @Path("number") String number);
 
 
 }

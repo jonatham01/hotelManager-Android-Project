@@ -79,15 +79,15 @@ public class HotelPhoneCall {
         });
     }
 
-    public void update(HotelPhone request, Short id,Runnable onComplete){
-        Call<HotelPhoneResponse> call = api.updateHotelPhoneResponse("Bearer " + token,request,id);
+    public void update(HotelPhone request, String number,Runnable onComplete){
+        Call<HotelPhoneResponse> call = api.updateHotelPhoneResponse("Bearer " + token,request,number);
         call.enqueue(new Callback<HotelPhoneResponse>() {
             @Override
             public void onResponse(Call<HotelPhoneResponse> call, Response<HotelPhoneResponse> response) {
                 try{
                     if(response.isSuccessful()){
                         phoneList = phoneList.stream().map(phone->{
-                            if(phone.getId() ==id){
+                            if(phone.getHotelNumber() ==number){
                                 assert response.body() != null;
                                 phone = response.body();
                             }
@@ -107,14 +107,14 @@ public class HotelPhoneCall {
         });
     }
 
-    public void delete(Short id,Runnable onComplete){
-        Call<Boolean> call = api.deleteHotelPhoneResponse("Bearer " + token,id);
+    public void delete(String number,Runnable onComplete){
+        Call<Boolean> call = api.deleteHotelPhoneResponse("Bearer " + token,number);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(@NonNull Call<Boolean> call, @NonNull Response<Boolean> response) {
                 try{
                     if(response.isSuccessful())  phoneList = phoneList.stream()
-                            .filter(data -> !data.getId().equals(id))
+                            .filter(data -> !data.getHotelNumber().equals(number))
                             .collect(Collectors.toList());
                     onComplete.run();
                 }catch (Exception e){
